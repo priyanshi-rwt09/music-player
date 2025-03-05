@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="st.css"> <!-- Link to the CSS file -->
+</head>
+<body>
+    <div class="header">
+        <h1>Music</h1>
+        <div class="search-menu">
+            <input type="text" id="searchInput" placeholder="Search" onkeydown="checkEnter(event)">
+            <button onclick="searchSongs()">🔍</button>
+            <button>⋮</button>
+        </div>
+    </div>
+
+    <h1 class="h1" onclick="toggleContent('Search results')">Search Results</h1>
+    <h1 class="h1" onclick="toggleContent('favorites')">Favorites</h1>
+    <h1 class="h1" onclick="toggleContent('recently-played')">Recently Added</h1>
+
+    <hr>
+
+    <!-- Search Results Section -->
+    <div id="Search results" class="content">
+        <h2>Search Results</h2>
+        <ul id="songResults" class="song-results"></ul>
+    </div>
+
+    <!-- Favorites Section -->
+    <div id="favorites" class="content">
+        <h2>All Songs</h2>
+        <ul id="allSongs">
+        </ul>
+    </div>
+
+    <!-- Recently Added Section -->
+    <div id="recently-played" class="content">
+        <h2>Recently Played</h2>
+        <ul id="recentlyPlayedSongs"></ul>
+    </div>
+
+    <!-- Audio Player Section at the Bottom -->
+    <div class="audio-player">
+        <audio id="audioPlayer" controls>
+            <source id="audioSource" src="" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="controls">
+            <button onclick="playPause()">▶ Play</button>
+            <button onclick="stopAudio()">■ Stop</button>
+        </div>
+    </div>
+
+    <script src="java.js"></script> <!-- Link to the JavaScript file -->
+</body>
+</html>

@@ -1,0 +1,135 @@
+/* CSS Styles for the Music Player App */
+
+button:hover {
+    background-color: #555;
+    color: #fff;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+.play-button:hover {
+    background-color: #4CAF50;
+}
+
+.add-button:hover {
+    background-color: #005f73;
+}
+
+h1 {
+    padding-right: 50px;
+    display: inline-block;
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px 0;
+    font-size: 28px;
+    border-radius: 5px;
+    background-color: rgb(143, 143, 143);
+}
+
+hr {
+    height: 0px;
+    background-color: #333131;
+    width: 35%;
+    margin: 0px auto;
+}
+
+.header {
+    padding: 10px;
+    background: linear-gradient(to right, #0b0b0b 35%, white 30%);
+    color: white;
+}
+
+.content {
+    display: none;
+    width: 34%;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.search-menu {
+    display: flex;
+    align-items: center;
+}
+
+.search-menu input {
+    padding: 5px;
+    margin-right: 10px;
+    width: 400px;
+}
+
+.search-menu button {
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.add-song {
+    margin-top: 10px;
+}
+
+.add-song input {
+    padding: 5px;
+    width: 300px;
+}
+
+.add-song button {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.song-results {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.song-results li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.play-button {
+    cursor: pointer;
+    background: #6ff673;
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+}
+
+.add-button {
+    cursor: pointer;
+    background: #008CBA;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.audio-player {
+    position: fixed;
+    bottom: 0;
+    width: 35%;
+    background-color: rgb(57, 57, 57);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.audio-player audio {
+    width: 80%;
+}
+
+.audio-player .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
