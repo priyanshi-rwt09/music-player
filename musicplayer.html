@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+       
+        button:hover {
+            background-color: #555; 
+            color: #fff; 
+            transform: scale(1.1);
+            transition: all 0.2s ease; 
+        }
+
+        
+        .play-button:hover {
+            background-color: #4CAF50; 
+        }
+
+        
+        .add-button:hover {
+            background-color: #005f73; 
+        }
+
+        h1 {
+            padding-right: 50px;
+            display: inline-block;
+            cursor: pointer;
+            padding: 5px;
+            margin: 5px 0;
+            font-size: 28px;
+            border-radius: 5px;
+            background-color: rgb(143, 143, 143);
+        }
+
+        hr {
+            height: 0px;
+            background-color: #333131;
+            width: 35%;
+            margin: 0px auto;
+            margin-left: 0;
+            margin-right: auto;
+        }
+
+        .header {
+            padding: 10px;
+            background: linear-gradient(to right, #0b0b0b 35%, white 30%);
+            color: white;
+        }
+
+        .content {
+            display: none;
+            height: auto;
+            overflow: hidden;
+            width: 34%;
+            padding: 10px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .search-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-menu input {
+            padding: 5px;
+            margin-right: 10px;
+            width: 400px;
+        }
+
+        .search-menu button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .add-song {
+            margin-top: 10px;
+        }
+
+        .add-song input {
+            padding: 5px;
+            width: 300px;
+        }
+
+        .add-song button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .song-results {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .song-results li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .play-button {
+            cursor: pointer;
+            background: #6ff673;
+            color: white;
+            border: none;
+            padding: 10px 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+        }
+
+        .add-button {
+            cursor: pointer;
+            background: #008CBA;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* Audio Player at the Bottom */
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            width: 35%;
+            background-color: rgb(57, 57, 57);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .audio-player audio {
+            width: 80%; /* Adjust width as needed */
+        }
+
+        .audio-player .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Music</h1>
+        <div class="search-menu">
+            <input type="text" id="searchInput" placeholder="Search" onkeydown="checkEnter(event)">
+            <button onclick="searchSongs()">🔍</button>
+            <button>⋮</button>
+        </div>
+    </div>
+
+    <h1 class="h1" onclick="toggleContent('Search results')">Search Results</h1>
+    <h1 class="h1" onclick="toggleContent('favorites')">Favorites</h1>
+    <h1 class="h1" onclick="toggleContent('recently-played')">Recently Added</h1>
+
+    <hr>
+
+    <!-- Search Results Section -->
+    <div id="Search results" class="content">
+        <h2>Search Results</h2>
+        <ul id="songResults" class="song-results"></ul>
+    </div>
+
+    <!-- Favorites Section -->
+    <div id="favorites" class="content">
+        <h2>All Songs</h2>
+        <ul id="allSongs">
+        </ul>
+    </div>
+
+    <!-- Recently Added Section -->
+    <div id="recently-played" class="content">
+        <h2>Recently Played</h2>
+        <ul id="recentlyPlayedSongs"></ul>
+    </div>
+
+    <!-- Audio Player Section at the Bottom -->
+    <div class="audio-player">
+        <audio id="audioPlayer" controls>
+            <source id="audioSource" src="" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="controls">
+            <button onclick="playPause()">▶ Play</button>
+            <button onclick="stopAudio()">■ Stop</button>
+        </div>
+    </div>
+
+    <script>
+        let recentlyPlayed = [];
+
+        function toggleContent(id) {
+            let content = document.getElementById(id);
+
+            document.querySelectorAll('.content').forEach(item => {
+                if (item !== content) {
+                    item.style.display = 'none';
+                }
+            });
+
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
+
+        async function searchSongs() {
+            const query = document.getElementById("searchInput").value;
+            if (!query) return;
+
+            const apiUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=10`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                const resultsContainer = document.getElementById("songResults");
+                resultsContainer.innerHTML = ""; // Clear previous results
+
+                if (data.results.length === 0) {
+                    resultsContainer.innerHTML = "<li>No songs found</li>";
+                } else {
+                    data.results.forEach(song => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `
+                            ${song.trackName} - ${song.artistName}
+                            <button class="play-button" onclick="playSong('${song.previewUrl}', '${song.trackName}', '${song.artistName}')">▶ Play</button>
+                            <button class="add-button" onclick="addToFavorites('${song.trackName}', '${song.artistName}', '${song.previewUrl}')">Add</button>
+                        `;
+                        resultsContainer.appendChild(listItem);
+                    });
+                }
+
+                document.getElementById("Search results").style.display = "block";
+            } catch (error) {
+                console.error("Error fetching songs:", error);
+            }
+        }
+
+        function playSong(previewUrl, trackName, artistName) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioSource = document.getElementById('audioSource');
+            audioSource.src = previewUrl;
+            audioPlayer.load(); // Reload the audio element to update source
+            audioPlayer.play();
+
+            // Add to Recently Played
+            addToRecentlyPlayed(trackName, artistName, previewUrl);
+        }
+
+        function addToFavorites(songName, artistName, previewUrl) {
+            let favoritesList = document.getElementById('allSongs');
+            let newSong = document.createElement('li');
+            newSong.textContent = `${songName} - ${artistName}`;
+
+            const playButton = document.createElement('button');
+            playButton.textContent = "▶ Play";
+            playButton.onclick = function() {
+                playSong(previewUrl, songName, artistName);
+            };
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = "Remove";
+            removeButton.onclick = function() {
+                favoritesList.removeChild(newSong);
+            };
+
+            newSong.appendChild(playButton);
+            newSong.appendChild(removeButton);
+            favoritesList.appendChild(newSong);
+        }
+
+        function playPause() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                document.querySelector('.audio-player button').textContent = "⏸ Pause";
+            } else {
+                audioPlayer.pause();
+                document.querySelector('.audio-player button').textContent = "▶ Play";
+            }
+        }
+
+        function stopAudio() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0; // Reset to the beginning
+            document.querySelector('.audio-player button').textContent = "▶ Play";
+        }
+
+        function addToRecentlyPlayed(trackName, artistName, previewUrl) {
+            if (recentlyPlayed.length >= 30) {
+                recentlyPlayed.shift(); // Remove the first item if we already have 5 songs
+            }
+            recentlyPlayed.push({ trackName, artistName, previewUrl });
+
+            // Update Recently Played list UI
+            const recentlyPlayedList = document.getElementById("recentlyPlayedSongs");
+            recentlyPlayedList.innerHTML = ''; // Clear previous list
+
+            recentlyPlayed.forEach(song => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${song.trackName} - ${song.artistName}
+                    <button class="play-button" onclick="playSong('${song.previewUrl}', '${song.trackName}', '${song.artistName}')">▶ Play</button>`;
+                recentlyPlayedList.appendChild(listItem);
+            });
+        }
+    </script>
+
+</body>
+</html>
